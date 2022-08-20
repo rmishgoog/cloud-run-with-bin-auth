@@ -1,0 +1,40 @@
+### Terraform ###
+# Local .terraform directories
+cloud-run-provisioning/.terraform/*
+
+# .tfstate files
+cloud-run-provisioning/*.tfstate
+cloud-run-provisioning/*.tfstate.*
+
+# Crash log files
+cloud-run-provisioning/crash.log
+cloud-run-provisioning/crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which are potentially sensitive and subject
+# to change depending on the environment.
+cloud-run-provisioning/*.tfvars
+cloud-run-provisioning/*.tfvars.json
+
+#Exclude the lock file from being tracked
+cloud-run-provisioning/.terraform.lock.hcl
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+cloud-run-provisioning/override.tf
+cloud-run-provisioning/override.tf.json
+cloud-run-provisioning/*_override.tf
+cloud-run-provisioning/*_override.tf.json
+cloud-run-provisioning/*.yaml
+README.md
+
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+# Ignore CLI configuration files
+cloud-run-provisioning/.terraformrc
+cloud-run-provisioning/terraform.rc
