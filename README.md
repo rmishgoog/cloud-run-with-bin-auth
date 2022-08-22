@@ -19,7 +19,7 @@ _Let's see some Google Cloud Binary Auth in action:_
 _First thing first, let's make sure you have the required tools/software set up:_
 1. _Google cloud SDK_
 2. _Terraform_
-3. _Docker or any other OCI complaint container tool like podman_
+3. _Docker or any other OCI image spec compatible container tool like podman_
 4. _A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
 
 
