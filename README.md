@@ -17,10 +17,10 @@ _In short, Binary Authorization works mainly with three key constructs, the poli
 _Let's see some Google Cloud Binary Auth in action:_
 
 _First thing first, let's make sure you have the required tools/software set up:_
-_1. Google cloud SDK_
-_2. Terraform_
-_3. Docker or any other OCI complaint container tool like podman_
-_4. A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
+1. _Google cloud SDK_
+2. _Terraform_
+3. _Docker or any other OCI complaint container tool like podman_
+4. _A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
 
 
 
