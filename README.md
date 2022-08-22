@@ -14,3 +14,13 @@ https://cloud.google.com/binary-authorization/docs
 
 _In short, Binary Authorization works mainly with three key constructs, the policy, the attestors and the attestations, attestations are like 'signed certificates' proving that a certain build artifact like your docker image has successfully passed certain validations or has been built using a "trusted" system and can be admitted into your Kubernetes cluster. Both GKE and Cloud Run support Bin Auth which can be enabled by few clicks of the button and you will see it in action. In this tutorial, we will focus on Cloud Run and demonstrate a simple use case where our Cloud Run service will only accept images built using Google Cloud Build. Any attempt to bypass Google Cloud Build and pushing images directly to the registry will result in service failing to provision a new revision (which is what we want!)._
 
+_Let's see some Google Cloud Binary Auth in action:_
+
+_First thing first, let's make sure you have the required tools/software set up:_
+_1. Google cloud SDK_
+_2. Terraform_
+_3. Docker or any other OCI complaint container tool like podman_
+_4. A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
+
+
+
