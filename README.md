@@ -22,5 +22,24 @@ _First thing first, let's make sure you have the required tools/software set up:
 3. _Docker or any other OCI image spec compatible container tool like podman_
 4. _A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
 
-
+_Form your workstation, where Google Cloud SDK is installed:_
+```
+gcloud auth login
+```
+_At this moment, your cloud SDK is authenticated with the credentials you provided._
+```
+gcloud auth application-default login
+```
+_Follow the instructions and updated the application defaults, this will set up the right project and billin contexts._
+```
+gcloud auth list
+```
+_Make sure that the account listed is the same as you intend to use (owner/editor)._
+```
+gcloud config list
+```
+_Check the project and account, if the project is not what you intend to use, set the project via gcloud_:
+```
+gcloud config set project <project-id>
+```
 
