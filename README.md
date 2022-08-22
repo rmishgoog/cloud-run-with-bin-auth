@@ -45,3 +45,70 @@ _Check the project and account, if the project is not what you intend to use, se
 gcloud config set project <project-id>
 ```
 _At this moment, if everything looks good, let's proceed with cloning the git repo locally._
+```
+git clone https://github.com/rmishgoog/cloud-run-with-bin-auth.git
+```
+_Next, we will enable a few services and APIs that we need for this tutorial:_
+```
+gcloud services enable binaryauthorization.googleapis.com  containerregistry.googleapis.com run.googleapis.com compute.googleapis.com --async
+```
+_It may take a couple of minutes for all these APIs to get enabled, so wait for about 2 minutes here before proceeding._
+
+_Once the services we need have been enabled, we can not look at our current bin auth polciy and mofify it to add the Cloud Build attestor, this will make Cloud Run service for which bin auth is enabled, verify the image and therefore the attestation created by Cloud Build. Cloud Build automatically adds an attestation to the images that it builts and it is stored alongside the image metadata._
+
+_Get the current bin auth policy on the project:_
+```
+gcloud container binauthz policy export > current_policy_exported.yaml
+```
+_This file should look simarl to this:_
+```
+defaultAdmissionRule:
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+  evaluationMode: REQUIRE_ATTESTATION
+globalPolicyEvaluationMode: ENABLE
+name: projects/rmishra-kubernetes-playground/policy
+```
+_Now, modify the file and add the Cloud Buil attestors to the required attestors, a sample file in the repo is provided, you can use that and make modifications._
+```
+defaultAdmissionRule:
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+  evaluationMode: REQUIRE_ATTESTATION
+  requireAttestationsBy:
+    - projects/<PROJECT ID>/attestors/built-by-cloud-build
+globalPolicyEvaluationMode: ENABLE
+name: projects/<PROJECT ID>/policy
+```
+_Remember to replace the PROJECT ID whit the project you are working in._
+
+_Next, go ahead an import this policy back. Pay attention to the YAML file name, you can copy the exported file, rename and modify there._
+```
+gcloud container binauthz policy import current_policy.yaml
+```
+_Check if the Cloud Build attestor is getting listed or not._
+```
+gcloud container binauthz attestors list
+```
+_This should produce an output like below (you will see your project name though):_
+```
+──────────────────────┬───────────────────────────────────────────────────────────────────┬─────────────────┐
+│         NAME         │                                NOTE                               │ NUM_PUBLIC_KEYS │
+├──────────────────────┼───────────────────────────────────────────────────────────────────┼─────────────────┤
+│ built-by-cloud-build │ projects/rmishra-kubernetes-playground/notes/built-by-cloud-build │ 30              │
+└──────────────────────┴───────────────────────────────────────────────────────────────────┴─────────────────┘
+```
+_Now, we will build the application (into a docker image) using Cloud Build. For this tutorial, we will directly build from source, Cloud Build uses CNCNF buildpacks for building container images for a wide variety of runtime environments. Ours is a Go application which is fully supported by Google Cloud Build for direct from source type build._
+
+_Navigate to the application source code directory, here you will also find the Dockerfile to be used by Cloud Build for building your image._
+```
+cd cloud-run-with-bin-auth
+```
+```
+cd service-source-code/
+```
+_Execute the Google Cloud Build from the CLI using gcloud SDK, remember to replace the PROJECT ID:_
+```
+gcloud builds submit --tag=gcr.io/<PROJECT ID>/product-listing-api:binauth
+```
+_Wait for the build to finish, upon the completion, you will see the image present in the Google Cloud Container Registry, to distinguish the attested image from a non-attested image, we will use easy to understand image tags, for example, the image we just built is an attested image and thus we use the tag binauth._
+
+_Next, let's deploy the Cloud Run service using this image. We are going to use Terraform for provisioning and making changes when we experiment between an attested and an un-attested image, instructions to use Terraform are provided here, you should just make sure that Terraform is installed on the workstation you are executing the tutorial from._
