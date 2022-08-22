@@ -22,15 +22,17 @@ _First thing first, let's make sure you have the required tools/software set up:
 3. _Docker or any other OCI image spec compatible container tool like podman_
 4. _A Google Cloud account, though principle of least privileges is the recommended approach, here we will use an account with owner/editor role_
 
-_Form your workstation, where Google Cloud SDK is installed:_
+_Form your workstation, where Google Cloud SDK is installed, autheticate using gcloud:_
 ```
 gcloud auth login
 ```
-_At this moment, your cloud SDK is authenticated with the credentials you provided._
+_At this moment, your cloud SDK is authenticated with the credentials you provided, next set up the application defaults or the ADC to be used by Google cloud libraries when making API calls, this is critical for the Terraform provider as well._
 ```
 gcloud auth application-default login
 ```
-_Follow the instructions and updated the application defaults, this will set up the right project and billin contexts._
+_Follow the instructions and updated the application defaults, this will set up the right project context and billing context._
+
+_Next, verify the gcloud settings:_
 ```
 gcloud auth list
 ```
@@ -42,4 +44,4 @@ _Check the project and account, if the project is not what you intend to use, se
 ```
 gcloud config set project <project-id>
 ```
-
+_At this moment, if everything looks good, let's proceed with cloning the git repo locally._
