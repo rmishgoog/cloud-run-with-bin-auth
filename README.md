@@ -150,65 +150,7 @@ _Check for any errors, and if none, your Cloud Run service is provisioned succes
 ```
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" https://cloudrun-binauth-demo-service-7ljpzipopq-uc.a.run.app/cars
 ```
-```
-[
-    {
-        "id": "1",
-        "name": "Ford Mustang GT 5.0",
-        "stock": 100,
-        "price": 55000.99,
-        "origin": "USA",
-        "engine": "v8"
-    },
-    {
-        "id": "2",
-        "name": "Ford Explorer ST",
-        "stock": 55,
-        "price": 60000.99,
-        "origin": "USA",
-        "engine": "v6"
-    },
-    {
-        "id": "4",
-        "name": "Ford Escape Compact",
-        "stock": 10,
-        "price": 35000.89,
-        "origin": "USA",
-        "engine": "v4"
-    },
-    {
-        "id": "5",
-        "name": "Ford Edge LX Luxury",
-        "stock": 1000,
-        "price": 38000.89,
-        "origin": "Germany",
-        "engine": "v6"
-    },
-    {
-        "id": "6",
-        "name": "Ford Edge LX Base",
-        "stock": 10,
-        "price": 36000.89,
-        "origin": "Germany",
-        "engine": "v6"
-    },
-    {
-        "id": "7",
-        "name": "Ford Edge LX Base 2022",
-        "stock": 10,
-        "price": 36000.89,
-        "origin": "Germany",
-        "engine": "v6"
-    },
-    {
-        "id": "8",
-        "name": "Ford Edge LX Eco 2022",
-        "stock": 10,
-        "price": 54000.89,
-        "origin": "Germany",
-        "engine": "v6"
-    }]
-```
+
 _Alright, so deployment was successful. Now, let's try to by pass Cloud Build and deploy a locally build container image and see how Binary Authorization will prevent this image from being deployed and render the new Cloud Run revision in error, not serving any traffic and completely unusable._
 ```
 cd ../service-source-code/
@@ -221,5 +163,43 @@ docker push gcr.io/<project id>/product-listing-api:nobinauth
 ```
 _Note, remember to replace the <project id> with your project, additionally, on this workstation we have autneticated docker with the gcloud credentials helper, for more information on how it works, refer to the below documentation._
   
+https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper
 
+_Now, let's update the terraform code to deploy the new image which was not built by Cloud Build but rather a developer with access to push images into GCR, built it locally and eventually pushed it, this can be a risky proposition for the enterprises as you maynot want to trust any random images being pushed and deployed to Production, they may contain known vulnerabilities, bugs or security flaws which can compromise your production environment, moreover they literally bypass the whole CI sub-system, for example through configured steps in Cloud Build, before an image is built and pushed, you may want to run some code scans, unit tests or integration tests, this way you can be more assured that an image pushed to GCR after CI sub-system has executed can be trusted better._
 
+```
+cd ../cloud-run-provisioning/
+```
+_In the main.tf, make this change:_
+```
+containers {
+        image = "gcr.io/${var.project}/product-listing-api:nobinauth"
+      }
+```
+```
+terraform plan
+```
+```
+Plan: 0 to add, 1 to change, 0 to destroy.
+```
+_Alright, so just the service to change here, let's deploy it:_
+```
+terraform apply -auto-approve
+```
+_And we are informed as expected that image was found with no signed attestation which can be verified by Cloud Build attestors:_
+```
+Error: resource is in failed state "Ready:False", message: Container image 'gcr.io/rmishra-kubernetes-playground/product-listing-api@sha256:81a7a088debb1b38198a3e00900d26f7e1fdeea6f1869e94a120185b8443cf71' is not authorized by policy. Image gcr.io/rmishra-kubernetes-playground/product-listing-api@sha256:81a7a088debb1b38198a3e00900d26f7e1fdeea6f1869e94a120185b8443cf71 denied by attestor projects/rmishra-kubernetes-playground/attestors/built-by-cloud-build: No attestations found that were valid and signed by a key trusted by the attestor
+```
+_Now, revert back to the image with attestaion, in the main.tf file:_
+```
+image = "gcr.io/${var.project}/product-listing-api:binauth"
+```
+```
+terraform apply -auto-approve
+```
+_As we can see, the service's new revision with an attested image gets deployed successfully and works as expected._
+
+_Finally, clean up with Terraform._
+```
+terraform destroy -auto-approve
+```
