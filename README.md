@@ -161,7 +161,7 @@ docker build -t gcr.io/<project id>/product-listing-api:nobinauth .
 ```
 docker push gcr.io/<project id>/product-listing-api:nobinauth
 ```
-_Note, remember to replace the <project id> with your project, additionally, on this workstation we have autneticated docker with the gcloud credentials helper, for more information on how it works, refer to the below documentation._
+_Note, remember to replace the "project id" with your project, additionally, on this workstation we have autneticated docker with the gcloud credentials helper, for more information on how it works, refer to the below documentation._
   
 https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper
 
