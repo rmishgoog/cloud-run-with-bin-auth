@@ -203,3 +203,4 @@ _Finally, clean up with Terraform._
 ```
 terraform destroy -auto-approve
 ```
+_P.S.: Opinions are personal and do not refelect my employers views, source code provided can be used/re-purposed as needed but comes with no support for any production or non-production usage._
