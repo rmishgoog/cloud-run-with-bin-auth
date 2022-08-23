@@ -1,4 +1,4 @@
-## Using Binary Authorization with Google Cloud Run
+## Use Binary Authorization with Google Cloud Run to allow Cloud Build built images only
 
 _Google Cloud Run provides a serverless platform to run stateless containers at scale, being a serverless offering from the fastest growing public cloud on planet, Cloud Run needs no infrastructure provisioning or management from the users, you simply bring your containers (no matter what programming stack or container tool like docker or podman, as long as it can build an OCI compliant image) and supply it to Cloud Run. Very flexible, right? Not just that but it keeps your application portable across the platforms, for example you can decide to move the same container into a GKE cluster or simply run it as a container on  VM with no orchestration layer on top._
 
